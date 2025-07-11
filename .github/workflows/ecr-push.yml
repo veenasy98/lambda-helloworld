@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: eu-central-1
   ECR_REPOSITORY: lambda-taskrepo
   IMAGE_TAG: version1
   AWS_ACCOUNT_ID: 825382393065
