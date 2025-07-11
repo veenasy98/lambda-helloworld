@@ -6,22 +6,25 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: lambda-taskrepo
-  IMAGE_TAG: version1  # Updated to a valid tag format
+  IMAGE_TAG: version1
   AWS_ACCOUNT_ID: 825382393065
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write  # 👈 Required for OIDC
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::825382393065:role/GitHubOIDCRole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
