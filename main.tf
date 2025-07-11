@@ -9,11 +9,16 @@ resource "aws_lambda_function" "lambda" {
   role          = aws_iam_role.lambda_execution_role.arn
   memory_size   = 128
   timeout       = 15
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_basic_execution,
+    aws_iam_role_policy_attachment.lambda_ecr_pull
+  ]
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda_execution_role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -32,6 +37,11 @@ resource "aws_iam_role" "lambda_execution_role" {
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.lambda_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_ecr_pull" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
 resource "aws_lambda_permission" "apigw" {
